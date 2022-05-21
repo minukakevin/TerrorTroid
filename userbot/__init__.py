@@ -47,9 +47,9 @@ from pySmartDL import SmartDL
 from requests import get
 # Bot Logs setup:
 if bool(ENV):
-    CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
-
-    if CONSOLE_LOGGER_VERBOSE:
+    if CONSOLE_LOGGER_VERBOSE := sb(
+        os.environ.get("CONSOLE_LOGGER_VERBOSE", "False")
+    ):
         basicConfig(
             format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             level=DEBUG,
@@ -59,12 +59,9 @@ if bool(ENV):
                     level=INFO)
     LOGS = getLogger(__name__)
 
-    # Check if the config was edited by using the already used variable.
-    # Basically, its the 'virginity check' for the config file ;)
-    CONFIG_CHECK = os.environ.get(
-        "___________PLOX_______REMOVE_____THIS_____LINE__________", None)
-
-    if CONFIG_CHECK:
+    if CONFIG_CHECK := os.environ.get(
+        "___________PLOX_______REMOVE_____THIS_____LINE__________", None
+    ):
         LOGS.info(
             "Please remove the line mentioned in the first hashtag from the config.env file"
         )
@@ -112,7 +109,7 @@ if bool(ENV):
 
     # Default .alive name
     ALIVE_NAME = os.environ.get("ALIVE_NAME", None)
-    
+
     LESS_SPAMMY = os.environ.get("LESS_SPAMMY", True)
 
     # Time & Date - Country and Time Zone
@@ -132,13 +129,16 @@ if bool(ENV):
     LASTFM_USERNAME = os.environ.get("LASTFM_USERNAME", None)
     LASTFM_PASSWORD_PLAIN = os.environ.get("LASTFM_PASSWORD", None)
     LASTFM_PASS = pylast.md5(LASTFM_PASSWORD_PLAIN)
-    if not LASTFM_USERNAME == "None":
-        lastfm = pylast.LastFMNetwork(api_key=LASTFM_API,
-                                      api_secret=LASTFM_SECRET,
-                                      username=LASTFM_USERNAME,
-                                      password_hash=LASTFM_PASS)
-    else:
-        lastfm = None
+    lastfm = (
+        None
+        if LASTFM_USERNAME == "None"
+        else pylast.LastFMNetwork(
+            api_key=LASTFM_API,
+            api_secret=LASTFM_SECRET,
+            username=LASTFM_USERNAME,
+            password_hash=LASTFM_PASS,
+        )
+    )
 
     # Google Drive Module
     G_DRIVE_CLIENT_ID = os.environ.get("G_DRIVE_CLIENT_ID", None)

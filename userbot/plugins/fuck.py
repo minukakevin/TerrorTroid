@@ -17,16 +17,11 @@ import asyncio
 
 
 @borg.on(events.NewMessage(pattern=r"\.(.*)", outgoing=True))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.1
-
-    animation_ttl = range(0, 101)
 
     input_str = event.pattern_match.group(1)
 
@@ -46,6 +41,10 @@ async def _(event):
 
         ]
 
+        animation_interval = 0.1
+
+        animation_ttl = range(101)
+
         for i in animation_ttl:
 
             await asyncio.sleep(animation_interval)
@@ -54,16 +53,11 @@ async def _(event):
 
 
 @borg.on(events.NewMessage(pattern=r"\.(.*)", outgoing=True))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.2
-
-    animation_ttl = range(0, 101)
 
     input_str = event.pattern_match.group(1)
 
@@ -82,6 +76,10 @@ async def _(event):
             "🤵👼👰"
 
         ]
+
+        animation_interval = 0.2
+
+        animation_ttl = range(101)
 
         for i in animation_ttl:
 
@@ -102,16 +100,11 @@ import asyncio
 
 
 @borg.on(events.NewMessage(pattern=r"\.(.*)", outgoing=True))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.2
-
-    animation_ttl = range(0, 101)
 
     input_str = event.pattern_match.group(1)
 
@@ -130,6 +123,10 @@ async def _(event):
             "🤵💋👰"
 
         ]
+
+        animation_interval = 0.2
+
+        animation_ttl = range(101)
 
         for i in animation_ttl:
 

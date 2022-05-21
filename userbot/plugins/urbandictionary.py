@@ -19,4 +19,4 @@ async def _(event):
         mean = await urban.get_word(word)
         await event.edit("Text: **{}**\n\nMeaning: **{}**\n\nExample: __{}__".format(mean.word, mean.definition, mean.example))
     except asyncurban.WordNotFoundError:
-        await event.edit("No result found for **" + word + "**")
+        await event.edit(f"No result found for **{word}**")

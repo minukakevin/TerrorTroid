@@ -86,8 +86,6 @@ async def updater(message):
         repo.create_remote(REPO_REMOTE_NAME, OFFICIAL_UPSTREAM_REPO)
     except Exception as e:
         print(e)
-        pass
-
     temp_upstream_remote = repo.remote(REPO_REMOTE_NAME)
     temp_upstream_remote.fetch(active_branch_name)
 
@@ -102,7 +100,7 @@ async def updater(message):
     if not changelog:
         await message.edit("`Updating...`")
         await asyncio.sleep(8)
- 
+
     message_one = NEW_BOT_UP_DATE_FOUND.format(
         branch_name=active_branch_name,
         changelog=changelog
@@ -140,9 +138,9 @@ async def updater(message):
                     await message.edit("Invalid APP Name. Please set the name of your bot in heroku in the var `HEROKU_APP_NAME.`")
                     return
                 heroku_git_url = heroku_app.git_url.replace(
-                    "https://",
-                    "https://api:" + Var.HEROKU_API_KEY + "@"
+                    "https://", f"https://api:{Var.HEROKU_API_KEY}@"
                 )
+
                 if "heroku" in repo.remotes:
                     remote = repo.remote("heroku")
                     remote.set_url(heroku_git_url)
@@ -160,11 +158,11 @@ async def updater(message):
         
 
 def generate_change_log(git_repo, diff_marker):
-    out_put_str = ""
     d_form = "%d/%m/%y"
-    for repo_change in git_repo.iter_commits(diff_marker):
-        out_put_str += f"•[{repo_change.committed_datetime.strftime(d_form)}]: {repo_change.summary} <{repo_change.author}>\n"
-    return out_put_str
+    return "".join(
+        f"•[{repo_change.committed_datetime.strftime(d_form)}]: {repo_change.summary} <{repo_change.author}>\n"
+        for repo_change in git_repo.iter_commits(diff_marker)
+    )
 
 async def deploy_start(tgbot, message, refspec, remote):
     await message.edit(RESTARTING_APP)

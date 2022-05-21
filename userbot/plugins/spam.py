@@ -17,9 +17,7 @@ async def spammer(e):
         counter = int(message[6:8])
         spam_message = str(e.text[8:])
 
-        await wait(
-            [e.respond(spam_message) for i in range(counter)]
-            )
+        await wait([e.respond(spam_message) for _ in range(counter)])
 
         await e.delete()
         if LOGGER:

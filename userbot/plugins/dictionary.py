@@ -11,7 +11,7 @@ async def _(event):
     if event.fwd_from:
         return
     input_str = event.pattern_match.group(1)
-    input_url = "https://bots.shrimadhavuk.me/dictionary/?s={}".format(input_str)
+    input_url = f"https://bots.shrimadhavuk.me/dictionary/?s={input_str}"
     headers = {"USER-AGENT": "UniBorg"}
     caption_str = f"Meaning of __{input_str}__\n"
     try:
@@ -24,9 +24,7 @@ async def _(event):
             caption_str += f"**{current_meaning_type}**: {current_meaning_definition}\n\n"
     except Exception as e:
         caption_str = str(e)
-    reply_msg_id = event.message.id
-    if event.reply_to_msg_id:
-        reply_msg_id = event.reply_to_msg_id
+    reply_msg_id = event.reply_to_msg_id or event.message.id
     try:
         await borg.send_file(
             event.chat_id,

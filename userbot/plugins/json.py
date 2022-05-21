@@ -30,4 +30,4 @@ async def _(event):
             )
             await event.delete()
     else:
-        await event.edit("`{}`".format(the_real_message))
+        await event.edit(f"`{the_real_message}`")

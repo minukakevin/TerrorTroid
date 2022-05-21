@@ -30,7 +30,7 @@ async def _(event):
     lan = lan.strip()
     if not os.path.isdir(Config.TMP_DOWNLOAD_DIRECTORY):
         os.makedirs(Config.TMP_DOWNLOAD_DIRECTORY)
-    required_file_name = Config.TMP_DOWNLOAD_DIRECTORY + "voice.ogg"
+    required_file_name = f"{Config.TMP_DOWNLOAD_DIRECTORY}voice.ogg"
     try:
         #https://github.com/SpEcHiDe/UniBorg/commit/17f8682d5d2df7f3921f50271b5b6722c80f4106
         tts = gTTS(text, lang=lan)
@@ -38,17 +38,18 @@ async def _(event):
         command_to_execute = [
             "ffmpeg",
             "-i",
-             required_file_name,
-             "-map",
-             "0:a",
-             "-codec:a",
-             "libopus",
-             "-b:a",
-             "100k",
-             "-vbr",
-             "on",
-             required_file_name + ".opus"
+            required_file_name,
+            "-map",
+            "0:a",
+            "-codec:a",
+            "libopus",
+            "-b:a",
+            "100k",
+            "-vbr",
+            "on",
+            f"{required_file_name}.opus",
         ]
+
         try:
             t_response = subprocess.check_output(command_to_execute, stderr=subprocess.STDOUT)
         except (subprocess.CalledProcessError, NameError, FileNotFoundError) as exc:
@@ -56,7 +57,7 @@ async def _(event):
             # continue sending required_file_name
         else:
             os.remove(required_file_name)
-            required_file_name = required_file_name + ".opus"
+            required_file_name = f"{required_file_name}.opus"
         end = datetime.now()
         ms = (end - start).seconds
         await borg.send_file(
@@ -68,7 +69,7 @@ async def _(event):
             voice_note=True
         )
         os.remove(required_file_name)
-        await event.edit("Processed {} ({}) in {} seconds!".format(text[0:97], lan, ms))
+        await event.edit(f"Processed {text[:97]} ({lan}) in {ms} seconds!")
         await asyncio.sleep(5)
         await event.delete()
     except Exception as e:

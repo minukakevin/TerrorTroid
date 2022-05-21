@@ -18,4 +18,4 @@ async def _(event):
         else:
             await event.edit("Current Chat ID: `{}`\nFrom User ID: `{}`".format(str(event.chat_id), str(r_msg.from_id)))
     else:
-        await event.edit("Current Chat ID: `{}`".format(str(event.chat_id)))
+        await event.edit(f"Current Chat ID: `{str(event.chat_id)}`")

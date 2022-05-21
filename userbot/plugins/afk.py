@@ -32,10 +32,10 @@ async def _(event):
     afk_time = None
     last_afk_message = {}
     afk_end = {}
-    start_1 = datetime.now()
-    afk_start = start_1.replace(microsecond=0)
-    reason = event.pattern_match.group(1)
     if not USER_AFK:  # pylint:disable=E0602
+        start_1 = datetime.now()
+        afk_start = start_1.replace(microsecond=0)
+        reason = event.pattern_match.group(1)
         last_seen_status = await borg(  # pylint:disable=E0602
             functions.account.GetPrivacyRequest(
                 types.InputPrivacyKeyStatusTimestamp()
@@ -47,7 +47,7 @@ async def _(event):
         if reason:
             await borg.send_message(event.chat_id, f"**I shall be Going afk!** __because ~ {reason}__")
         else:
-            await borg.send_message(event.chat_id, f"**I am Going afk!**")
+            await borg.send_message(event.chat_id, "**I am Going afk!**")
         await asyncio.sleep(5)
         await event.delete()
         try:
@@ -121,7 +121,7 @@ async def on_afk(event):
             datime_since_afk = now - afk_time  # pylint:disable=E0602
             time = float(datime_since_afk.seconds)
             days = time // (24 * 3600)
-            time = time % (24 * 3600)
+            time %= 24 * 3600
             hours = time // 3600
             time %= 3600
             minutes = time // 60
@@ -141,9 +141,9 @@ async def on_afk(event):
             elif hours > 1:
                 afk_since = f"`{int(hours)}h{int(minutes)}m` **ago**"
             elif minutes > 0:
-                afk_since = f"`{int(minutes)}m{int(seconds)}s` **ago**"
+                afk_since = f"`{int(minutes)}m{seconds}s` **ago**"
             else:
-                afk_since = f"`{int(seconds)}s` **ago**"
+                afk_since = f"`{seconds}s` **ago**"
         msg = None
         message_to_reply = f"__My Master Has Been Gone For__ `{total_afk_time}`\nWhere He Is: ~~ONLY GOD KNOWS~~ " + \
             f"\n\n__I promise I'll back in a few light years__\n**REASON**: {reason}" \

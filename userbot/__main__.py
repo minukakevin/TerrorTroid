@@ -61,7 +61,7 @@ else:
         print("Startup Completed")
     else:
         ((bot.start()) if os.environ.get("PHONE") is None else (bot.start(phone=os.environ.get("PHONE"))))
-    
+
 
 import glob
 path = 'userbot/plugins/*.py'
@@ -76,7 +76,8 @@ import userbot._core
 
 print("Yay your userbot is officially working. Ja gaand mara")
 
-if len(argv) not in (1, 3, 4):
-    bot.disconnect()
-else:
+if len(argv) in {1, 3, 4}:
     bot.run_until_disconnected()
+
+else:
+    bot.disconnect()

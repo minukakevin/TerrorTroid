@@ -33,11 +33,7 @@ Mute.__table__.create(checkfirst=True)
 
 
 def is_muted(sender, chat_id):
-    user = SESSION.query(Mute).get((str(sender), str(chat_id)))
-    if user:
-        return True
-    else:
-        return False
+    return bool(user := SESSION.query(Mute).get((str(sender), str(chat_id))))
 
 
 def mute(sender, chat_id):
@@ -47,7 +43,6 @@ def mute(sender, chat_id):
 
 
 def unmute(sender, chat_id):
-    rem = SESSION.query(Mute).get((str(sender), str(chat_id)))
-    if rem:
+    if rem := SESSION.query(Mute).get((str(sender), str(chat_id))):
         SESSION.delete(rem)
         SESSION.commit()

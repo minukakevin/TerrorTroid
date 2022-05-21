@@ -12,10 +12,7 @@ async def _(event):
         return
     await event.edit("Processing ...")
     cmd = event.text.split(" ", maxsplit=1)[1]
-    reply_to_id = event.message.id
-    if event.reply_to_msg_id:
-        reply_to_id = event.reply_to_msg_id
-
+    reply_to_id = event.reply_to_msg_id or event.message.id
     old_stderr = sys.stderr
     old_stdout = sys.stdout
     redirected_output = sys.stdout = io.StringIO()
@@ -62,7 +59,10 @@ async def _(event):
 
 async def aexec(code, event):
     exec(
-        f'async def __aexec(event): ' +
-        ''.join(f'\n {l}' for l in code.split('\n'))
+        (
+            'async def __aexec(event): '
+            + ''.join(f'\n {l}' for l in code.split('\n'))
+        )
     )
+
     return await locals()['__aexec'](event)

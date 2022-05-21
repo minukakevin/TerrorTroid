@@ -13,25 +13,25 @@ import sys
 @borg.on(events.NewMessage(pattern=r"\.meme", outgoing=True))
 async def meme(event):
     if event.fwd_from:
-        return   
+        return
     memeVar = event.text
     sleepValue = 3
     memeVar = memeVar[6:] 
-           
-    await event.edit("-------------"+memeVar)
-    await event.edit("------------"+memeVar+"-")
-    await event.edit("-----------"+memeVar+"--")
-    await event.edit("----------"+memeVar+"---")
-    await event.edit("---------"+memeVar+"----")    
-    await event.edit("--------"+memeVar+"-----")
-    await event.edit("-------"+memeVar+"------")
-    await event.edit("------"+memeVar+"-------")
-    await event.edit("-----"+memeVar+"--------")
-    await event.edit("----"+memeVar+"---------")
-    await event.edit("---"+memeVar+"----------")
-    await event.edit("--"+memeVar+"-----------")
-    await event.edit("-"+memeVar+"------------")
-    await event.edit(memeVar+"-------------")
+
+    await event.edit(f"-------------{memeVar}")
+    await event.edit(f"------------{memeVar}-")
+    await event.edit(f"-----------{memeVar}--")
+    await event.edit(f"----------{memeVar}---")
+    await event.edit(f"---------{memeVar}----")
+    await event.edit(f"--------{memeVar}-----")
+    await event.edit(f"-------{memeVar}------")
+    await event.edit(f"------{memeVar}-------")
+    await event.edit(f"-----{memeVar}--------")
+    await event.edit(f"----{memeVar}---------")
+    await event.edit(f"---{memeVar}----------")
+    await event.edit(f"--{memeVar}-----------")
+    await event.edit(f"-{memeVar}------------")
+    await event.edit(f"{memeVar}-------------")
     await event.edit(memeVar)
     await asyncio.sleep(sleepValue)
 
@@ -43,11 +43,11 @@ usage:- .flower
 @borg.on(events.NewMessage(pattern=r"\.flower", outgoing=True))
 async def meme(event):
     if event.fwd_from:
-        return   
+        return
     flower =" 🌹"
     sleepValue = 5
-           
-    await event.edit(flower+"        ")
+
+    await event.edit(f"{flower}        ")
     await event.edit(flower+flower+"       ")
     await event.edit(flower+flower+flower+"      ")
     await event.edit(flower+flower+flower+flower+"     ")

@@ -136,9 +136,7 @@ async def promote(promt):
     user, rank = await get_user_from_event(promt)
     if not rank:
         rank = "admeme"  # Just in case.
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Try to promote if current user is admin or creator
@@ -179,9 +177,7 @@ async def demote(dmod):
     rank = "admeme"  # dummy rank, lol.
     user = await get_user_from_event(dmod)
     user = user[0]
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # New rights after demotion
@@ -226,8 +222,7 @@ async def _(event):
     elif input_cmd == "unban":
         rights = UNBAN_RIGHTS
     input_str = event.pattern_match.group(2)
-    reply_msg_id = event.reply_to_msg_id
-    if reply_msg_id:
+    if reply_msg_id := event.reply_to_msg_id:
         r_mesg = await event.get_reply_message()
         to_ban_id = r_mesg.from_id
     elif input_str and "all" not in input_str:
@@ -250,8 +245,7 @@ async def _(event):
         i = 1
         msgs = []
         from_user = None
-        input_str = event.pattern_match.group(1)
-        if input_str:
+        if input_str := event.pattern_match.group(1):
             from_user = await borg.get_entity(input_str)
             logger.info(from_user)
         async for message in borg.iter_messages(
@@ -287,8 +281,7 @@ async def _(event):
     elif input_cmd == "unban":
         rights = UNBAN_RIGHTS
     input_str = event.pattern_match.group(2)
-    reply_msg_id = event.reply_to_msg_id
-    if reply_msg_id:
+    if reply_msg_id := event.reply_to_msg_id:
         r_mesg = await event.get_reply_message()
         to_ban_id = r_mesg.from_id
     elif input_str and "all" not in input_str:
@@ -357,9 +350,7 @@ async def promote(promt):
     user, rank = await get_user_from_event(promt)
     if not rank:
         rank = "admeme"  # Just in case.
-    if user:
-        pass
-    else:
+    if not user:
         return
 
     # Try to promote if current user is admin or creator
@@ -387,7 +378,7 @@ async def promote(promt):
 async def get_admin(show):
     """ For .admins command, list all of the admins of the chat. """
     info = await show.client.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = f'<b>Admins in {title}:</b> \n'
     try:
         async for user in show.client.iter_participants(
@@ -399,7 +390,7 @@ async def get_admin(show):
             else:
                 mentions += f"\nDeleted Account <code>{user.id}</code>"
     except ChatAdminRequiredError as err:
-        mentions += " " + str(err) + "\n"
+        mentions += f" {str(err)}" + "\n"
     await show.edit(mentions, parse_mode="html")
 
 
@@ -425,11 +416,7 @@ async def pin(msg):
 
     options = msg.pattern_match.group(1)
 
-    is_silent = True
-
-    if options.lower() == "loud":
-        is_silent = False
-
+    is_silent = options.lower() != "loud"
     try:
         await msg.client(
             UpdatePinnedMessageRequest(msg.to_id, to_pin, is_silent))
@@ -474,7 +461,7 @@ async def kick(usr):
         await usr.client.kick_participant(usr.chat_id, user.id)
         await sleep(.5)
     except Exception as e:
-        await usr.edit(NO_PERM + f"\n{str(e)}")
+        await usr.edit(f"{NO_PERM}\n{str(e)}")
         return
 
     if reason:
@@ -497,39 +484,43 @@ async def kick(usr):
 async def get_users(show):
     """ For .users command, list all of the users in a chat. """
     info = await show.client.get_entity(show.chat_id)
-    title = info.title if info.title else "this chat"
+    title = info.title or "this chat"
     mentions = 'Users in {}: \n'.format(title)
     try:
         if not show.pattern_match.group(1):
             async for user in show.client.iter_participants(show.chat_id):
-                if not user.deleted:
-                    mentions += f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
-                else:
-                    mentions += f"\nDeleted Account `{user.id}`"
+                mentions += (
+                    f"\nDeleted Account `{user.id}`"
+                    if user.deleted
+                    else f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
+                )
+
         else:
             searchq = show.pattern_match.group(1)
             async for user in show.client.iter_participants(
                     show.chat_id, search=f'{searchq}'):
-                if not user.deleted:
-                    mentions += f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
-                else:
-                    mentions += f"\nDeleted Account `{user.id}`"
+                mentions += (
+                    f"\nDeleted Account `{user.id}`"
+                    if user.deleted
+                    else f"\n[{user.first_name}](tg://user?id={user.id}) `{user.id}`"
+                )
+
     except ChatAdminRequiredError as err:
-        mentions += " " + str(err) + "\n"
+        mentions += f" {str(err)}" + "\n"
     try:
         await show.edit(mentions)
     except MessageTooLongError:
         await show.edit(
             "Damn, this is a huge group. Uploading users lists as file.")
-        file = open("userslist.txt", "w+")
-        file.write(mentions)
-        file.close()
+        with open("userslist.txt", "w+") as file:
+            file.write(mentions)
         await show.client.send_file(
             show.chat_id,
             "userslist.txt",
-            caption='Users in {}'.format(title),
+            caption=f'Users in {title}',
             reply_to=show.id,
         )
+
         remove("userslist.txt")
 
 

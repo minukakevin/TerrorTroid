@@ -2,6 +2,7 @@
 coded by @By_Azade
 code rewritten my SnapDragon7410
 """
+
 import asyncio
 import os
 import time
@@ -18,8 +19,8 @@ from telethon import events
 import zipfile
 
 
-extracted = Config.TMP_DOWNLOAD_DIRECTORY + "extracted/"
-thumb_image_path = Config.TMP_DOWNLOAD_DIRECTORY + "/thumb_image.jpg"
+extracted = f"{Config.TMP_DOWNLOAD_DIRECTORY}extracted/"
+thumb_image_path = f"{Config.TMP_DOWNLOAD_DIRECTORY}/thumb_image.jpg"
 
 @borg.on(admin_cmd("zip"))
 async def _(event):
@@ -39,18 +40,22 @@ async def _(event):
                 Config.TMP_DOWNLOAD_DIRECTORY,
             )
             directory_name = downloaded_file_name
-            await event.edit(downloaded_file_name)
+            await event.edit(directory_name)
         except Exception as e:  # pylint:disable=C0103,W0703
             await mone.edit(str(e))
-    zipfile.ZipFile(directory_name + '.zip', 'w', zipfile.ZIP_DEFLATED).write(directory_name)
+    zipfile.ZipFile(f'{directory_name}.zip', 'w', zipfile.ZIP_DEFLATED).write(
+        directory_name
+    )
+
     await borg.send_file(
         event.chat_id,
-        directory_name + ".zip",
+        f"{directory_name}.zip",
         caption="**Zipped!**",
         force_document=True,
         allow_cache=False,
         reply_to=event.message.id,
     )
+
     await asyncio.sleep(7)
     await event.delete()
 
@@ -84,7 +89,7 @@ async def _(event):
         else:
             end = datetime.now()
             ms = (end - start).seconds
-            await mone.edit("Stored the zip to `{}` in {} seconds.".format(downloaded_file_name, ms))
+            await mone.edit(f"Stored the zip to `{downloaded_file_name}` in {ms} seconds.")
 
         with zipfile.ZipFile(downloaded_file_name, 'r') as zip_ref:
             zip_ref.extractall(extracted)
@@ -116,9 +121,10 @@ async def _(event):
                 except Exception as e:
                     await bot.send_message(
                         event.chat_id,
-                        "{} caused `{}`".format(caption_rts, str(e)),
-                        reply_to=event.message.id
+                        f"{caption_rts} caused `{str(e)}`",
+                        reply_to=event.message.id,
                     )
+
                     # some media were having some issues
                     continue
                 os.remove(single_file)

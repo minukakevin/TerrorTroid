@@ -33,7 +33,7 @@ async def install(event):
     chat = Var.PLUGIN_CHANNEL
     documentss = await borg.get_messages(chat, None , filter=InputMessagesFilterDocument)
     total = int(documentss.total)
-    total_doxx = range(0, total)
+    total_doxx = range(total)
     await event.delete()
     for ixo in total_doxx:
         mxo = documentss[ixo].id
@@ -42,6 +42,13 @@ async def install(event):
             path1 = Path(downloaded_file_name)
             shortname = path1.stem
             load_module(shortname.replace(".py", ""))
-            await borg.send_message(event.chat_id, "Installed Plugin `{}` successfully.".format(os.path.basename(downloaded_file_name)))
+            await borg.send_message(
+                event.chat_id,
+                f"Installed Plugin `{os.path.basename(downloaded_file_name)}` successfully.",
+            )
+
         else:
-            await borg.send_message(event.chat_id, "Plugin `{}` has been pre-installed and cannot be installed.".format(os.path.basename(downloaded_file_name)))
+            await borg.send_message(
+                event.chat_id,
+                f"Plugin `{os.path.basename(downloaded_file_name)}` has been pre-installed and cannot be installed.",
+            )

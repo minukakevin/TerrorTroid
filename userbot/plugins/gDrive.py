@@ -22,7 +22,7 @@ import httplib2
 
 
 # Path to token json file, it should be in same directory as script
-G_DRIVE_TOKEN_FILE = Var.TEMP_DOWNLOAD_DIRECTORY + "/auth_token.txt"
+G_DRIVE_TOKEN_FILE = f"{Var.TEMP_DOWNLOAD_DIRECTORY}/auth_token.txt"
 # Copy your credentials from the APIs Console
 CLIENT_ID = Var.G_DRIVE_CLIENT_ID
 CLIENT_SECRET = Var.G_DRIVE_CLIENT_SECRET
@@ -63,14 +63,14 @@ async def _(event):
             end = datetime.now()
             ms = (end - start).seconds
             required_file_name = downloaded_file_name
-            await mone.edit("Downloaded to `{}` in {} seconds.".format(downloaded_file_name, ms))
+            await mone.edit(f"Downloaded to `{required_file_name}` in {ms} seconds.")
     elif input_str:
         input_str = input_str.strip()
         if os.path.exists(input_str):
             end = datetime.now()
             ms = (end - start).seconds
             required_file_name = input_str
-            await mone.edit("Found `{}` in {} seconds.".format(input_str, ms))
+            await mone.edit(f"Found `{required_file_name}` in {ms} seconds.")
         else:
             await mone.edit("File Not found in local server. Give me a file path :((")
             return False
@@ -105,7 +105,7 @@ async def sch(event):
         return
     if CLIENT_ID is None or CLIENT_SECRET is None:
         await event.edit("This module requires credentials from https://da.gd/so63O. Aborting!")
-        return False    
+        return False
     try:
         with open(G_DRIVE_TOKEN_FILE) as f:
             pass
@@ -116,14 +116,14 @@ async def sch(event):
         token_file_data = f.read()
         await event.client.send_message(int(Var.PRIVATE_GROUP_ID), "Please add Var AUTH_TOKEN_DATA with the following as the value:\n\n`" + token_file_data + "`")
         # Authorize, get file parameters, upload file and print out result URL for download
-    http = authorize(G_DRIVE_TOKEN_FILE, None)    
+    http = authorize(G_DRIVE_TOKEN_FILE, None)
     input_str = event.pattern_match.group(1).strip()
-    await event.edit("Searching for {} in G-Drive.".format(input_str))
+    await event.edit(f"Searching for {input_str} in G-Drive.")
     if parent_id is not None:
-        query = "'{}' in parents and (title contains '{}')".format(parent_id, input_str)
+        query = f"'{parent_id}' in parents and (title contains '{input_str}')"
     else:
-        query = "title contains '{}'".format(input_str)
-    query = "'{}' in parents and (title contains '{}')".format(parent_id,input_str)#search_query(parent_id,input_str)
+        query = f"title contains '{input_str}'"
+    query = f"'{parent_id}' in parents and (title contains '{input_str}')"
     msg = await gsearch(http,query,input_str)
     await event.edit(str(msg))
 
@@ -139,10 +139,17 @@ async def gsearch(http,query,filename):
                                           pageToken=page_token).execute()
         for file in response.get('items',[]):
             if file.get('mimeType') == "application/vnd.google-apps.folder":
-                msg +="⁍ [{}](https://drive.google.com/drive/folders/{}) (folder)".format(file.get('title'),file.get('id'))+"\n"
-            # Process change
+                msg += (
+                    f"⁍ [{file.get('title')}](https://drive.google.com/drive/folders/{file.get('id')}) (folder)"
+                    + "\n"
+                )
+
             else:
-                msg += "⁍ [{}](https://drive.google.com/uc?id={}&export=download)".format(file.get('title'),file.get('id'))+"\n"
+                msg += (
+                    f"⁍ [{file.get('title')}](https://drive.google.com/uc?id={file.get('id')}&export=download)"
+                    + "\n"
+                )
+
         page_token = response.get('nextPageToken', None)
         if page_token is None:
             break
@@ -166,20 +173,22 @@ async def _(event):
         if Var.AUTH_TOKEN_DATA is not None:
             with open(G_DRIVE_TOKEN_FILE, "w") as t_file:
                 t_file.write(Var.AUTH_TOKEN_DATA)
-        # Check if token file exists, if not create it by requesting authorization code
-        storage = None
-        if not os.path.isfile(G_DRIVE_TOKEN_FILE):
-            storage = await create_token_file(G_DRIVE_TOKEN_FILE, event)
+        storage = (
+            None
+            if os.path.isfile(G_DRIVE_TOKEN_FILE)
+            else await create_token_file(G_DRIVE_TOKEN_FILE, event)
+        )
+
         http = authorize(G_DRIVE_TOKEN_FILE, storage)
         f = open(G_DRIVE_TOKEN_FILE, "r")
         token_file_data = f.read()
         await event.client.send_message(int(Var.PRIVATE_GROUP_ID), "Please add Var AUTH_TOKEN_DATA with the following as the value:\n\n`" + token_file_data + "`")
         # Authorize, get file parameters, upload file and print out result URL for download
         # first, create a sub-directory
-        await event.edit("Uploading `{}` to G-Drive...".format(input_str))
+        await event.edit(f"Uploading `{input_str}` to G-Drive...")
         dir_id = await create_directory(http, os.path.basename(os.path.abspath(input_str)), parent_id)
         await DoTeskWithDir(http, input_str, event, dir_id)
-        dir_link = "https://drive.google.com/folderview?id={}".format(dir_id)
+        dir_link = f"https://drive.google.com/folderview?id={dir_id}"
         await event.edit(f"__Successfully Uploaded Folder To G-Drive...__\n[{input_str}]({dir_link})")
     else:
         await event.edit(f"directory {input_str} does not seem to exist")
@@ -227,7 +236,7 @@ async def DoTeskWithDir(http, input_directory, event, parent_id):
 # Get mime type and name of given file
 def file_ops(file_path):
     mime_type = guess_type(file_path)[0]
-    mime_type = mime_type if mime_type else "text/plain"
+    mime_type = mime_type or "text/plain"
     file_name = file_path.split("/")[-1]
     return file_name, mime_type
 
@@ -297,10 +306,11 @@ async def upload_file(http, file_path, file_name, mime_type, event, parent_id):
         if status:
             percentage = int(status.progress() * 100)
             progress_str = "[{0}{1}]\nProgress: {2}%\n".format(
-                "".join(["█" for i in range(math.floor(percentage / 5))]),
-                "".join(["░" for i in range(20 - math.floor(percentage / 5))]),
-                round(percentage, 2)
+                "".join(["█" for _ in range(math.floor(percentage / 5))]),
+                "".join(["░" for _ in range(20 - math.floor(percentage / 5))]),
+                round(percentage, 2),
             )
+
             current_message = f"Uploading to G-Drive:\nFile Name: `{file_name}`\n{progress_str}"
             if display_message != current_message:
                 try:
@@ -308,19 +318,17 @@ async def upload_file(http, file_path, file_name, mime_type, event, parent_id):
                     display_message = current_message
                 except Exception as e:
                     logger.info(str(e))
-                    pass
     file_id = response.get("id")
     # Insert new permissions
     drive_service.permissions().insert(fileId=file_id, body=permissions).execute()
     # Define file instance and get url for download
     file = drive_service.files().get(fileId=file_id).execute()
-    download_url = file.get("webContentLink")
-    return download_url
+    return file.get("webContentLink")
 
 
 @command(pattern="^.gfolder ?(.*)")
 async def _(event):
     if event.fwd_from:
         return
-    folder_link = "https://drive.google.com/folderview?id="+parent_id    
+    folder_link = f"https://drive.google.com/folderview?id={parent_id}"
     await event.edit("`Here is Your G-Drive Folder link : `\n"+folder_link)

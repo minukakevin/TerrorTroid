@@ -18,17 +18,11 @@ from userbot.utils import admin_cmd
 
 
 @borg.on(admin_cmd("(.*)"))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.5
-    
-
-    animation_ttl = range(0, 9)
 
     input_str = event.pattern_match.group(1)
 
@@ -48,6 +42,11 @@ async def _(event):
             "EvErYbOdY iZ BiGGeSt NoOoB uNtiL YoU aRriVe 😈"
         ]
 
+        animation_interval = 0.5
+
+
+        animation_ttl = range(9)
+
         for i in animation_ttl:
 
 
@@ -55,17 +54,11 @@ async def _(event):
             await asyncio.sleep(animation_interval)
             
 @borg.on(admin_cmd("(.*)"))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.5
-    
-
-    animation_ttl = range(0, 9)
 
     input_str = event.pattern_match.group(1)
 
@@ -85,6 +78,11 @@ async def _(event):
             "EvErYbOdY iZ BiGGeSt NoOoB uNtiL i aRriVe 😈"
         ]
 
+        animation_interval = 0.5
+
+
+        animation_ttl = range(9)
+
         for i in animation_ttl:
 
 
@@ -92,17 +90,11 @@ async def _(event):
             await asyncio.sleep(animation_interval) 
             
 @borg.on(admin_cmd("(.*)"))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.5
-    
-
-    animation_ttl = range(0, 8)
 
     input_str = event.pattern_match.group(1)
 
@@ -121,6 +113,11 @@ async def _(event):
             "EvErYbOdY iZ PeRu uNtiL YoU aRriVe 😈"
         ]
 
+        animation_interval = 0.5
+
+
+        animation_ttl = range(8)
+
         for i in animation_ttl:
 
 
@@ -128,17 +125,11 @@ async def _(event):
             await asyncio.sleep(animation_interval)  
             
 @borg.on(admin_cmd("(.*)"))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 0.5
-    
-
-    animation_ttl = range(0, 8)
 
     input_str = event.pattern_match.group(1)
 
@@ -156,6 +147,11 @@ async def _(event):
             "😈",
             "EvErYbOdY iZ PeRu uNtiL i aRriVe 😈"
         ]
+
+        animation_interval = 0.5
+
+
+        animation_ttl = range(8)
 
         for i in animation_ttl:
 

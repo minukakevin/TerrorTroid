@@ -9,7 +9,6 @@ import asyncio
 
 
 @borg.on(events.NewMessage(pattern=r"\.(.*)", outgoing=True))
-
 async def _(event):
 
     if event.fwd_from:
@@ -17,9 +16,7 @@ async def _(event):
         return
 
     animation_interval = 30
-    
 
-    animation_ttl = range(0, 103)
 
     input_str = event.pattern_match.group(1)
 
@@ -42,6 +39,8 @@ async def _(event):
             "(￣ー￣) DED",
             "**Target killed successfully (°̥̥̥̥̥̥̥̥•̀.̫•́°̥̥̥̥̥̥̥)**",
         ]
+
+        animation_ttl = range(103)
 
         for i in animation_ttl:
 

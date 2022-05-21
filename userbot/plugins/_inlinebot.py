@@ -70,7 +70,7 @@ if Var.TG_BOT_USER_NAME_BF_HER is not None and tgbot is not None:
         except:
             pass
         if help_string is "":
-            reply_pop_up_alert = "{} is useless".format(plugin_name)
+            reply_pop_up_alert = f"{plugin_name} is useless"
         else:
             reply_pop_up_alert = help_string
         reply_pop_up_alert += "\n Use .unload {} to remove this plugin\n\
@@ -78,30 +78,36 @@ if Var.TG_BOT_USER_NAME_BF_HER is not None and tgbot is not None:
         try:
             await event.answer(reply_pop_up_alert, cache_time=0, alert=True)
         except: 
-            halps = "Do .help {} to get the list of commands.".format(plugin_name)
+            halps = f"Do .help {plugin_name} to get the list of commands."
             await event.answer(halps, cache_time=0, alert=True)
 
 def paginate_help(page_number, loaded_plugins, prefix):
     number_of_rows = 5
     number_of_cols = 2
-    helpable_plugins = []
-    for p in loaded_plugins:
-        if not p.startswith("_"):
-            helpable_plugins.append(p)
+    helpable_plugins = [p for p in loaded_plugins if not p.startswith("_")]
     helpable_plugins = sorted(helpable_plugins)
-    modules = [custom.Button.inline(
-        "{} {}".format("ℹ️", x),
-        data="us_plugin_{}".format(x))
-        for x in helpable_plugins]
+    modules = [
+        custom.Button.inline(f'{"ℹ️"} {x}', data=f"us_plugin_{x}")
+        for x in helpable_plugins
+    ]
+
     pairs = list(zip(modules[::number_of_cols], modules[1::number_of_cols]))
     if len(modules) % number_of_cols == 1:
         pairs.append((modules[-1],))
     max_num_pages = ceil(len(pairs) / number_of_rows)
     modulo_page = page_number % max_num_pages
     if len(pairs) > number_of_rows:
-        pairs = pairs[modulo_page * number_of_rows:number_of_rows * (modulo_page + 1)] + \
-            [
-            (custom.Button.inline("Previous", data="{}_prev({})".format(prefix, modulo_page)),
-             custom.Button.inline("Next", data="{}_next({})".format(prefix, modulo_page)))
+        pairs = pairs[
+            modulo_page * number_of_rows : number_of_rows * (modulo_page + 1)
+        ] + [
+            (
+                custom.Button.inline(
+                    "Previous", data=f"{prefix}_prev({modulo_page})"
+                ),
+                custom.Button.inline(
+                    "Next", data=f"{prefix}_next({modulo_page})"
+                ),
+            )
         ]
+
     return pairs

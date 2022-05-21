@@ -50,11 +50,11 @@ async def device_info(request):
     else:
         await request.edit("`Usage: .device <codename> / <model>`")
         return
-    found = [
-        i for i in get(DEVICES_DATA).json()
+    if found := [
+        i
+        for i in get(DEVICES_DATA).json()
         if i["device"] == device or i["model"] == device
-    ]
-    if found:
+    ]:
         reply = f'Search results for {device}:\n\n'
         for item in found:
             brand = item['brand']

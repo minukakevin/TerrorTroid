@@ -19,16 +19,11 @@ import asyncio
 
 
 @borg.on(events.NewMessage(pattern=r"\.(.*)", outgoing=True))
-
 async def _(event):
 
     if event.fwd_from:
 
         return
-
-    animation_interval = 3
-
-    animation_ttl = range(0, 18)
 
     input_str = event.pattern_match.group(1)
 
@@ -37,7 +32,7 @@ async def _(event):
         await event.edit(input_str)
 
         animation_chars = [
-        
+
             "`Connecting To Telegram Headquarters...`",
             "`Call Connected.`",
             "`Telegram: Hello This is Telegram HQ. Who is this?`",
@@ -57,6 +52,10 @@ async def _(event):
             "`Pavel: Sure Sur \nTC Bye Bye :)`",
             "`Private Call Disconnected.`"
         ]
+
+        animation_interval = 3
+
+        animation_ttl = range(18)
 
         for i in animation_ttl:
 
